@@ -38,4 +38,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: tauri_app_windows_x64
-          path: target/release/bundle/**/*.exe
+          path: src-tauri/target/release/bundle/**/*.exe
