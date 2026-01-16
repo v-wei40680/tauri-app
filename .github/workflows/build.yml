@@ -10,17 +10,40 @@ jobs:
     permissions:
       contents: write
       packages: write
-    needs: prepare
     strategy:
       matrix:
         include:
-          - args: '--target aarch64-apple-darwin'
-            arch: 'silicon'
-    runs-on: macos-latest
+          - platform: "macos-latest"
+            args: ''
+          - platform: "macos-latest"
+            args: '--target x86_64-apple-darwin'
+
+    runs-on: ${{ matrix.platform }}
     env:
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
     steps:
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "src-tauri"
+
       - name: Import Apple Developer Certificate
         env:
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
