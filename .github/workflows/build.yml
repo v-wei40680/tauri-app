@@ -16,13 +16,12 @@ jobs:
         include:
           - platform: "macos-latest"
             args: ''
-          - platform: "macos-latest"
-            args: '--target x86_64-apple-darwin'
 
     runs-on: ${{ matrix.platform }}
     env:
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
     steps:
       - uses: actions/checkout@v4
 
